@@ -41,7 +41,7 @@ def make_lists(systems, sim_location, template_name):
 
   # Get SIM summary filepaths in specified SIM directory, and find which summaries are in unsupported formats
   # Unsupported formats are .docx (summaries are unstructured) and .xlsm (macros are disabled in restricted environment)
-  if template_name == "template 1":
+  if template_name == "Template 1":
     for file in sorted(os.scandir(sim_location), key = lambda e: e.name):
       if str(file)[11:16] in system_list:
         sim_summaries.append(os.path.join(sim_location, file))
