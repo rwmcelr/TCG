@@ -38,9 +38,28 @@ def format_test_case(test_case, sim_summaries, available_sims, template_name):
     with xw.App(visible = False) as app:
       sim = xw.Book(sims)
       tc = xw.Book(test_case)
+      identifier = available_sims[available_idx]
 
       # Conditionally move simulation summary pages based on their formatting and location in respective workbook
-      if sims.endswith('.xls'):
-        sim.sheets['SIM Modes'].copy(after = tc.sheets[excel_idx], name = ('SIM ' + available_sims[available_idx]))
-      elif lensim.sheet_names) > 1 and 'SIM Modes' in sim.sheet_names:
-      sim.sheets
+      if sims.endswith('.xls') or len(sim.sheet_names) > 1 and 'SIM Modes' in sim.sheet_names:
+        sim.sheets['SIM Modes'].copy(after = tc.sheets[excel_idx], name = ('SIM ' + identifier))
+      elif len(sim.sheet_names) > 1 and 'DETAIL MODE DESCRIPTIONS' in sim.sheet_names:
+        sim.sheets['DETAIL MODE DESCRIPTIONS'].copy(after = tc.sheets[excel_idx], name = ('SIM ' + identifier))
+      elif identifier in sim.sheet_names:
+        sim.sheets[identifier].copy(after = tc.sheets[excel_idx], name = ('SIM ' + identifier))
+      elif 'Specific Sheet Name' in sim.sheet_names:
+        sim.sheets['Param Sets'].copy(after = tc.sheets[excel_idx], name = ('SIM ' + identifier))
+      else:
+        sim.sheets[0].copy(after = tc.sheets[excel_idx], name = ('SIM ' + identifier))
+
+      # Add the correct identifier to the test case
+      tc.sheets[excel_idx].range(4,1).value = identifier
+
+      print('{0} summary added; {0} test case finalized.'.format(identifier))
+      excel_idx += 2
+      available_idx += 1
+
+      tc.save()
+      tc.close()
+
+  print('Generated test case with {0} emitters in {1} minutes.'.format(len(available_sims), (time.time()-start)/60))
